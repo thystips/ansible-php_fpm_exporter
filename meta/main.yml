@@ -5,7 +5,7 @@ galaxy_info:
   author: thystips
   company: ThysTips
 
-  issue_tracker_url: https://github.com/thystips/ansible-php_fpm_exporter/issues
+  issue_tracker_url: https://github.com/thystips/ansible-role-php_fpm_exporter/issues
 
   license: MIT
 

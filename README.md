@@ -1,9 +1,9 @@
 # thystips.php_fpm_exporter
 
 [![Maintainer](https://img.shields.io/badge/maintained%20by-thystips-e00000?style=flat-square)](https://github.com/thystips)
-[![License](https://img.shields.io/github/license/thystips/ansible-php_fpm_exporter?style=flat-square)](https://github.com/thystips/ansible-php_fpm_exporter/blob/main/LICENSE)
-[![Release](https://img.shields.io/github/v/release/thystips/ansible-php_fpm_exporter?style=flat-square)](https://github.com/thystips/ansible-php_fpm_exporter/releases)
-[![Status](https://img.shields.io/github/workflow/status/thystips/ansible-php_fpm_exporter/Ansible%20Molecule?style=flat-square&label=tests)](https://github.com/thystips/ansible-php_fpm_exporter/actions?query=workflow%3A%22Ansible+Molecule%22)
+[![License](https://img.shields.io/github/license/thystips/ansible-role-php_fpm_exporter?style=flat-square)](https://github.com/thystips/ansible-role-php_fpm_exporter/blob/main/LICENSE)
+[![Release](https://img.shields.io/github/v/release/thystips/ansible-role-php_fpm_exporter?style=flat-square)](https://github.com/thystips/ansible-role-php_fpm_exporter/releases)
+[![Status](https://img.shields.io/github/workflow/status/thystips/ansible-role-php_fpm_exporter/Ansible%20Molecule?style=flat-square&label=tests)](https://github.com/thystips/ansible-role-php_fpm_exporter/actions?query=workflow%3A%22Ansible+Molecule%22)
 [![Ansible Galaxy](https://img.shields.io/badge/ansible-galaxy-black.svg?style=flat-square&logo=ansible)](https://galaxy.ansible.com/thystips/php_fpm_exporter)[![Ansible version](https://img.shields.io/badge/ansible-%3E%3D2.10-black.svg?style=flat-square&logo=ansible)](https://github.com/ansible/ansible)
 
 ⭐ Star us on GitHub — it motivates us a lot!
@@ -40,13 +40,13 @@ ansible-galaxy install thystips.php_fpm_exporter
 If you do not want a global installation, clone it into your `roles_path`.
 
 ```bash
-git clone https://github.com/thystips/ansible-php_fpm_exporter  thystips.php_fpm_exporter
+git clone https://github.com/thystips/ansible-role-php_fpm_exporter thystips.php_fpm_exporter
 ```
 
 But I often add it as a submodule in a given `playbook_dir` repository.
 
 ```bash
-git submodule add https://github.com/thystips/ansible-php_fpm_exporter roles/thystips.php_fpm_exporter
+git submodule add https://github.com/thystips/ansible-role-php_fpm_exporter roles/thystips.php_fpm_exporter
 ```
 
 As the role is not managed by Ansible Galaxy, you do not have to specify the
@@ -64,12 +64,14 @@ Basic usage is:
         php_fpm_additional_args: []
         php_fpm_exporter_after_services: network-online.target
         php_fpm_exporter_default_template: default/php-fpm_exporter.j2
-        php_fpm_exporter_download_url: https://github.com/{{ php_fpm_exporter_github_repo}}/releases/download/v{{ php_fpm_exporter_version }} /php-fpm_exporter_{{ php_fpm_exporter_version}}_linux_{{ __architecture }}
+        php_fpm_exporter_download_url: https://github.com/{{ php_fpm_exporter_github_repo
+          }}/releases/download/v{{ php_fpm_exporter_version }}/php-fpm_exporter_{{ php_fpm_exporter_version
+          }}_linux_{{ __architecture }}
         php_fpm_exporter_force_reinstall: false
         php_fpm_exporter_install_dir: /usr/local/bin
         php_fpm_exporter_service_template: systemd/php-fpm_exporter.service.j2
         php_fpm_exporter_start_service_at_role_end: true
-        php_fpm_exporter_system_group: {{ php_fpm_exporter_system_user }}
+        php_fpm_exporter_system_group: '{{ php_fpm_exporter_system_user }}'
         php_fpm_exporter_system_user: php-fpm-exporter
         php_fpm_exporter_test_service: true
         php_fpm_exporter_version: latest
@@ -111,7 +113,7 @@ Role default variables from `defaults/main.yml`.
 | php_fpm_fix_process_count | False |
 | php_fpm_additional_args | []<br> |
 | php_fpm_exporter_after_services | network-online.target |
-| php_fpm_exporter_download_url | https://github.com/{{ php_fpm_exporter_github_repo }}/releases/download/v{{ php_fpm_exporter_version }} /php-fpm_exporter_{{ php_fpm_exporter_version }}_linux_{{ __architecture }}<br> |
+| php_fpm_exporter_download_url | https://github.com/{{ php_fpm_exporter_github_repo }}/releases/download/v{{ php_fpm_exporter_version }}/php-fpm_exporter_{{ php_fpm_exporter_version }}_linux_{{ __architecture }} |
 | php_fpm_exporter_default_template | default/php-fpm_exporter.j2 |
 | php_fpm_exporter_service_template | systemd/php-fpm_exporter.service.j2 |
 
