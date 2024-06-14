@@ -1,0 +1,102 @@
+---
+- name: Obtain the latest version from GitHub repo
+  when: php_fpm_exporter_version == "latest"
+  block:
+    - name: Scrape Github API endpoint to obtain latest version
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/{{ php_fpm_exporter_github_repo }}/releases/latest"
+        method: GET
+        body_format: json
+      become: false
+      delegate_to: localhost
+      run_once: true
+      register: __github_latest_version
+
+    - name: Latest available version
+      ansible.builtin.set_fact:
+        php_fpm_exporter_version: "{{ __github_latest_version.json.tag_name | regex_replace('^v?(\\d+\\.\\d+\\.\\d+)$', '\\1') }}"
+
+- name: Verify current deployed version
+  block:
+    - name: Check if binary is present
+      ansible.builtin.stat:
+        path: "{{ php_fpm_exporter_install_dir }}/{{ php_fpm_exporter_binary }}"
+      register: __already_deployed
+
+    - name: Obtain current deployed version
+      ansible.builtin.shell:
+        cmd: "set -o pipefail && {{ php_fpm_exporter_install_dir }}/{{ php_fpm_exporter_binary }} version | grep -oP 'v?(\\d+\\.\\d+\\.\\d+)'"
+        executable: /bin/bash
+      changed_when: false
+      register: __current_deployed_version
+      when: __already_deployed.stat.exists | bool
+
+- name: Create system user and group
+  when:
+    - php_fpm_exporter_system_user != "root"
+  block:
+    - name: Create group
+      ansible.builtin.group:
+        name: "{{ php_fpm_exporter_system_group }}"
+        state: present
+        system: true
+
+    - name: Create user
+      ansible.builtin.user:
+        name: "{{ php_fpm_exporter_system_user }}"
+        groups: "{{ php_fpm_exporter_system_group }}"
+        append: true
+        shell: /usr/sbin/nologin
+        system: true
+        createhome: false
+
+- name: Download binary
+  ansible.builtin.get_url:
+    url: "{{ php_fpm_exporter_download_url }}"
+    dest: "{{ php_fpm_exporter_install_dir }}/{{ php_fpm_exporter_binary }}"
+    mode: '0755'
+  when: not __already_deployed.stat.exists | bool or php_fpm_exporter_version != __current_deployed_version.stdout or php_fpm_exporter_force_reinstall
+  notify: Restart php-fpm_exporter
+
+- name: Install Systemd service
+  block:
+    - name: Create run configuration
+      ansible.builtin.template:
+        src: "{{ php_fpm_exporter_default_template }}"
+        dest: "{{ systemd_default_directory }}/{{ php_fpm_exporter_binary }}"
+        force: true
+        owner: root
+        group: "{{ php_fpm_exporter_system_group }}"
+        mode: "0640"
+      notify:
+        - Restart php-fpm_exporter
+
+    - name: Create systemd service unit
+      ansible.builtin.template:
+        src: "systemd/{{ php_fpm_exporter_binary }}.service.j2"
+        dest: "{{ systemd_lib_directory }}/{{ php_fpm_exporter_binary }}.service"
+        owner: root
+        group: root
+        mode: "0644"
+      notify:
+        - Daemond Reload
+        - Restart php-fpm_exporter
+
+- name: Start service and test
+  when: php_fpm_exporter_start_service_at_role_end and php_fpm_exporter_test_service
+  block:
+    - name: Start and enable service
+      ansible.builtin.systemd:
+        name: "{{ php_fpm_exporter_binary }}.service"
+        enabled: true
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
+    - name: Verify that exporter URL is responding
+      ansible.builtin.uri:
+        url: "http://{{ php_fpm_web_listen_address }}/metrics"
+        method: GET
+      register: php_fpm_exporter_verify_url_status_code
+      retries: 5
+      delay: 8
+      until: php_fpm_exporter_verify_url_status_code.status == 200
+      when: php_fpm_exporter_test_service

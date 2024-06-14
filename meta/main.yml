@@ -1,0 +1,33 @@
+galaxy_info:
+  role_name: php_fpm_exporter
+  namespace: thystips
+  description: Install php-fpm prometheus exporter
+  author: thystips
+  company: ThysTips
+
+  issue_tracker_url: https://github.com/thystips/ansible-php_fpm_exporter/issues
+
+  license: MIT
+
+  min_ansible_version: "2.1"
+
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Amazon
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+
+  galaxy_tags:
+    - phpfpmexporter
+    - prometheus
+    - ansible
+
+dependencies: []

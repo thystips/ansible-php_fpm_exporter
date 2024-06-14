@@ -1,0 +1,9 @@
+---
+- name: Daemond Reload
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Restart php-fpm_exporter
+  ansible.builtin.systemd:
+    name: php-fpm_exporter
+    state: restarted

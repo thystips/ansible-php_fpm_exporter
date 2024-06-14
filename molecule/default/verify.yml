@@ -1,0 +1,17 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - name: "Include php_fpm_exporter role"
+      ansible.builtin.include_role:
+        name: "php_fpm_exporter"
+    - name: Verify that exporter URL is responding
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:9253/metrics"
+        method: GET
+      register: php_fpm_exporter_verify_url_status_code
+      retries: 5
+      delay: 8
+      until: php_fpm_exporter_verify_url_status_code.status == 200

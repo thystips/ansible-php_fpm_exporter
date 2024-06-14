@@ -1,0 +1,11 @@
+---
+dependency:
+  name: galaxy
+  role-file: molecule/requirements.yml
+driver:
+  name: vagrant
+platforms:
+  - name: instance
+    box: generic/ubuntu2204
+    memory: 2048
+    cpus: 2

@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - name: "Include php_fpm_exporter role"
+      ansible.builtin.include_role:
+        name: "php_fpm_exporter"

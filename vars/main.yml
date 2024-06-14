@@ -1,0 +1,14 @@
+---
+
+php_fpm_exporter_github_repo: hipages/php-fpm_exporter
+
+php_fpm_exporter_binary: php-fpm_exporter
+
+go_arch_map:
+  x86_64: 'amd64'
+  aarch64: 'arm64'
+
+__architecture: "{{ go_arch_map[ansible_architecture] | default('amd64') }}"
+
+systemd_lib_directory: /etc/systemd/system
+systemd_default_directory: /etc/default

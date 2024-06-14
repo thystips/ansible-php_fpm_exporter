@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+
+# See usages : https://github.com/hipages/php-fpm_exporter?tab=readme-ov-file#usage
+
+PHP_FPM_LOG_LEVEL={{ php_fpm_log_level | default('info') }}
+PHP_FPM_WEB_LISTEN_ADDRESS={{ php_fpm_web_listen_address | default('127.0.0.1:9253') }}
+PHP_FPM_WEB_TELEMETRY_PATH={{ php_fpm_web_telemetry_path | default('/metrics') }}
+PHP_FPM_SCRAPE_URI={{ php_fpm_scrape_uri | default('tcp://127.0.0.1:9000/status') }}
+PHP_FPM_FIX_PROCESS_COUNT={{ php_fpm_fix_process_count | default(false) }}
+
+{% if php_fpm_additional_args %}
+  ADDITIONAL_ARGS="{{ php_fpm_additional_args | join(' ') }}"
+{% else %}
+  ADDITIONAL_ARGS=""
+{% endif %}
