@@ -11,7 +11,7 @@ User = {{ php_fpm_exporter_system_user }}
 Group = {{ php_fpm_exporter_system_group }}
 ExecReload = /bin/kill -HUP $MAINPID
 ExecStart = {{ php_fpm_exporter_install_dir }}/{{ php_fpm_exporter_binary }} server $ADDITIONAL_ARGS
-SyslogIdentifier = nginx_exporter
+SyslogIdentifier = php_fpm_exporter
 Restart = always
 
 [Install]
